@@ -3,6 +3,18 @@ from rest_framework.response import Response
 from .serializer import PersonSerializer 
 from .models import Person
 
+from rest_framework.views import APIView
+
+class ClassPerson(APIView):
+    def get(self, request):
+        return Response("THIS IS A GET METHODE")
+    
+
+    def post(self, request):
+        return Response("THIS IS A Post METHODE")
+
+     
+
 @api_view(['GET','POST','PUT'])
 def index(request):
     if request.method == 'GET':
@@ -25,7 +37,7 @@ def index(request):
 @api_view(['GET','POST','PUT', 'PACH','DELETE'])
 def person(request):
     if request.method == 'GET':
-        objPerson = Person.objects.all()
+        objPerson = Person.objects.filter(team__isnull=False)
         serializer = PersonSerializer(objPerson, many=True)
         return Response(serializer.data)
     elif request.method == 'POST' :
@@ -43,7 +55,7 @@ def person(request):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
-    elif request.methode == 'PACH':
+    elif request.method == 'PACH':
         data = request.data
         obj = Person.objects.get(id = data['id'])
         serializer = PersonSerializer(obj, data = data , partial = True)
